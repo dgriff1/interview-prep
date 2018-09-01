@@ -4,6 +4,38 @@ import "fmt"
 import "os"
 import "reflect"
 
+func merge(a []int, b []int) []int {
+	var size int = len(a) + len(b)
+	var i int = 0
+	var j int = 0
+	var slice []int = make([]int, size, size)
+	for k := 0; k < size; k++ {
+		if i > len(a)-1 && j <= len(b)-1 { // b still has stuff
+			slice[k] = b[j]
+			j++
+		} else if j > len(b)-1 && i <= len(a)-1 { //a still has stuff
+			slice[k] = a[i]
+			i++
+		} else if a[i] < b[j] {
+			slice[k] = a[i]
+			i++
+		} else {
+			slice[k] = b[j]
+			j++
+		}
+	}
+	return slice
+
+}
+
+func merge_sort(ints []int) []int {
+	if len(ints) < 2 {
+		return ints
+	}
+	var mid = len(ints) / 2
+	return merge(merge_sort(ints[:mid]), merge_sort(ints[mid:]))
+}
+
 func quicksort_build(ints []int) []int {
 	if len(ints) == 1 {
 		return ints
@@ -81,32 +113,36 @@ func main() {
 
 	bubblesort(unsorted)
 	if !reflect.DeepEqual(unsorted, sorted) {
-		fmt.Println("Did not sort correctly %v ", unsorted)
+		fmt.Println("Bubble sort did not sort correctly %v ", unsorted)
 		os.Exit(-1)
 	}
 
 	unsorted = []int{4, 3, 2, 1, 9, 10, 23, 2}
-	fmt.Println("Sorting %v ", unsorted)
 	quicksort(unsorted, 0, len(unsorted)-1)
 	if !reflect.DeepEqual(unsorted, sorted) {
-		fmt.Println("Did not sort correctly %v ", unsorted)
+		fmt.Println("Quicksort did not sort correctly %v ", unsorted)
 		os.Exit(-1)
 	}
 
 	unsorted = []int{4, 3, 2, 1, 9, 10, 23, 2}
-	fmt.Println("Sorting %v ", unsorted)
+	unsorted = merge_sort(unsorted)
+	if !reflect.DeepEqual(unsorted, sorted) {
+		fmt.Println("Merge sort did not sort correctly %v ", unsorted)
+		os.Exit(-1)
+	}
+
+	unsorted = []int{4, 3, 2, 1, 9, 10, 23, 2}
 	unsorted = quicksort_build(unsorted)
 	if !reflect.DeepEqual(unsorted, sorted) {
-		fmt.Println("Builder Did not sort correctly %v ", unsorted)
+		fmt.Println("Quicksort Builder Did not sort correctly %v ", unsorted)
 		os.Exit(-1)
 	}
 
 	unsorted = []int{4, 3, 12, 9, 9, 10, 23, 2}
 	sorted = []int{2, 3, 4, 9, 9, 10, 12, 23}
-	fmt.Println("Sorting %v ", unsorted)
 	quicksort(unsorted, 0, len(unsorted)-1)
 	if !reflect.DeepEqual(unsorted, sorted) {
-		fmt.Println("Did not sort correctly %v ", unsorted)
+		fmt.Println("Other quicksort Did not sort correctly %v ", unsorted)
 		os.Exit(-1)
 	}
 
