@@ -4,8 +4,32 @@ import "fmt"
 import "os"
 import "reflect"
 
-func partition(ints []int) int {
-	return len(ints) / 2
+func quicksort_build(ints []int) []int {
+	if len(ints) == 1 {
+		return ints
+	}
+	if len(ints) == 2 {
+		if ints[0] > ints[1] {
+			return []int{ints[1], ints[0]}
+		} else {
+			return ints
+		}
+	}
+	var pivot_offset int = len(ints) / 2
+	var pivot = ints[pivot_offset]
+	var left []int = []int{}
+	var right []int = []int{pivot}
+	for i := 0; i < len(ints); i++ {
+		if i == pivot_offset {
+			continue
+		}
+		if ints[i] >= pivot {
+			right = append(right, ints[i])
+		} else {
+			left = append(left, ints[i])
+		}
+	}
+	return append(quicksort_build(left), quicksort_build(right)...)
 }
 
 func quicksort(ints []int, start int, end int) {
@@ -66,6 +90,14 @@ func main() {
 	quicksort(unsorted, 0, len(unsorted)-1)
 	if !reflect.DeepEqual(unsorted, sorted) {
 		fmt.Println("Did not sort correctly %v ", unsorted)
+		os.Exit(-1)
+	}
+
+	unsorted = []int{4, 3, 2, 1, 9, 10, 23, 2}
+	fmt.Println("Sorting %v ", unsorted)
+	unsorted = quicksort_build(unsorted)
+	if !reflect.DeepEqual(unsorted, sorted) {
+		fmt.Println("Builder Did not sort correctly %v ", unsorted)
 		os.Exit(-1)
 	}
 
