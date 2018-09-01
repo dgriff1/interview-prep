@@ -8,6 +8,16 @@ type Node struct {
 	next *Node
 }
 
+func insert_sorted(node *Node, val int) {
+	if node.next == nil {
+		node.next = &Node{val: val}
+	} else if node.next.val > val {
+		node.next = &Node{val: val, next: node.next}
+	} else {
+		insert_sorted(node.next, val)
+	}
+}
+
 func insert(head *Node, val int) {
 	if head.next == nil {
 		head.next = &Node{val: val}
@@ -90,6 +100,17 @@ func create_list() *Node {
 	return head
 }
 
+func create_sorted_list() *Node {
+	var head *Node = &Node{val: 1}
+	insert_sorted(head, 5)
+	insert_sorted(head, 7)
+	insert_sorted(head, 5)
+	insert_sorted(head, 12)
+	insert_sorted(head, 7)
+	insert_sorted(head, 7)
+	return head
+}
+
 func main() {
 	var head *Node = create_list()
 	visit(head, print_visitor)
@@ -110,4 +131,7 @@ func main() {
 		fmt.Println("Reduce doesnt match after bubble sorting")
 		os.Exit(-1)
 	}
+	fmt.Println("Sorted version")
+	var sorted = create_sorted_list()
+	visit(sorted, print_visitor)
 }
