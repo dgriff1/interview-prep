@@ -1,6 +1,8 @@
 package main
 
 import "fmt"
+import "os"
+import "reflect"
 
 type Node struct {
 	Value int
@@ -23,13 +25,34 @@ func insert(curr *Node, val int) *Node {
 	return curr
 }
 
-func DepthFirst(curr *Node, label string) {
+func inorder(curr *Node, agg []int) []int {
 	if curr == nil {
-		return
+		return agg
 	}
-	fmt.Println("Iterate %d -- %s", curr.Value, label)
-	DepthFirst(curr.Left, "left")
-	DepthFirst(curr.Right, "right")
+	agg = inorder(curr.Left, agg)
+	agg = append(agg, curr.Value)
+	agg = inorder(curr.Right, agg)
+	return agg
+}
+
+func preorder(curr *Node, agg []int) []int {
+	if curr == nil {
+		return agg
+	}
+	agg = append(agg, curr.Value)
+	agg = preorder(curr.Left, agg)
+	agg = preorder(curr.Right, agg)
+	return agg
+}
+
+func postorder(curr *Node, agg []int) []int {
+	if curr == nil {
+		return agg
+	}
+	agg = postorder(curr.Left, agg)
+	agg = postorder(curr.Right, agg)
+	agg = append(agg, curr.Value)
+	return agg
 }
 
 func main() {
@@ -40,5 +63,24 @@ func main() {
 	insert(head, 1)
 	insert(head, 4)
 	insert(head, 20)
-	DepthFirst(head, "head")
+	var resp []int = inorder(head, []int{})
+	var inorder_arr = []int{1, 3, 4, 5, 7, 11, 20}
+	if !reflect.DeepEqual(resp, inorder_arr) {
+		fmt.Println("Inorder %v ", resp)
+		os.Exit(-1)
+	}
+	resp = preorder(head, []int{})
+	var preorder_arr = []int{5, 3, 1, 4, 7, 11, 20}
+	if !reflect.DeepEqual(resp, preorder_arr) {
+		fmt.Println("Preorder %v ", resp)
+		os.Exit(-1)
+	}
+	resp = postorder(head, []int{})
+	var postorder_arr = []int{1, 4, 3, 20, 11, 7, 5}
+	if !reflect.DeepEqual(resp, postorder_arr) {
+		fmt.Println("Postorder %v ", resp)
+		os.Exit(-1)
+	}
+
+	fmt.Println("everything worked")
 }
